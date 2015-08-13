@@ -6,6 +6,11 @@ class User < ActiveRecord::Base
     foreign_key: :author_id,
     primary_key: :id
 
+  has_many :responses,
+    class_name: "Response",
+    foreign_key: :user_id,
+    primary_key: :id
+
   has_many :authored_questions,
     :through :authored_polls,
     :source :questions
@@ -13,4 +18,6 @@ class User < ActiveRecord::Base
   has_many :authored_answer_choices
     :through :authored_questions,
     :source :answers
+
+
 end
