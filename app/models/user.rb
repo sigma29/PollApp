@@ -21,9 +21,7 @@ class User < ActiveRecord::Base
 
   private
 
-  def respondent_has_not_already_answered_question
 
-  end
 
 
 end
