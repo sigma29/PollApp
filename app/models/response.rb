@@ -20,8 +20,8 @@ class Response < ActiveRecord::Base
 
   def sibling_responses
 
-    AnswerChoice
-      .joins("as current_answer JOIN questions
+    Response
+      .joins("answer_choices AS current_answer JOIN questions
           ON current_answer.question_id = questions.id")
       .joins("JOIN answer_choices AS all_answers
           ON all_answers.question_id = questions.id")
@@ -47,12 +47,10 @@ class Response < ActiveRecord::Base
 
     poll_author =
       Poll
-        .where('responses.user_id = ?', self.user_id)
-        .joins(questions: :answer_choices)
-        .joins('LEFT OUTER JOIN responses
-            ON responses.answer_choice_id = answer_choices.id')
-        .first
-        .author_id
+      .joins(questions: :answer_choices)
+      .where('answer_choices.id = ?', self.answer_choice_id)
+      .first
+      .author_id
 
     if poll_author == self.user_id
       errors[:user_id] << "can't respond to your own poll"

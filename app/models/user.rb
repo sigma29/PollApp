@@ -21,24 +21,23 @@ class User < ActiveRecord::Base
 
 
   def completed_polls
-
-    Poll
-      .all
-      .joins("LEFT OUTER JOIN questions
-          ON questions.poll_id = polls.id")
-      .joins("LEFT OUTER JOIN answer_choices
-          ON answer_choices.question_id = questions.id")
-      .joins("LEFT OUTER JOIN
-        (SELECT
+    user_responses = <<-SQL
+      LEFT OUTER JOIN (
+        SELECT
           responses.*
         FROM
           responses
         WHERE
           responses.user_id = #{self.id}
-          ) AS user_responses
-        ON user_responses.answer_choice_id = answer_choices.id")
+      ) AS user_responses
+      ON
+        user_responses.answer_choice_id = answer_choices.id
+    SQL
+
+    Poll
+      .joins(questions: :answer_choices)
+      .joins(user_responses)
       .group("polls.id")
-      .select("polls.*")
       .having("COUNT(user_responses.answer_choice_id) =
         COUNT(DISTINCT questions.id)")
   end
