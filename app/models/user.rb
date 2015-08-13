@@ -9,4 +9,8 @@ class User < ActiveRecord::Base
   has_many :authored_questions,
     :through :authored_polls,
     :source :questions
+
+  has_many :authored_answer_choices
+    :through :authored_questions,
+    :source :answers
 end

@@ -5,4 +5,8 @@ class AnswerChoice < ActiveRecord::Base
     class_name: "Question",
     foreign_key: :question_id,
     primary_key: :id
+
+  has_one :author,
+  through: :question,
+  source: :author
 end
