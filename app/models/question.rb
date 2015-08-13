@@ -7,9 +7,10 @@ class Question < ActiveRecord::Base
     primary_key: :id
 
   has_many :answer_choices,
-      class_name: "AnswerChoice",
-      foreign_key: :question_id,
-      primary_key: :id
+    class_name: "AnswerChoice",
+    foreign_key: :question_id,
+    primary_key: :id,
+    dependent: :destroy
 
   has_one :author,
     through: :poll,
@@ -20,12 +21,14 @@ class Question < ActiveRecord::Base
     source: :responses
 
   def results
-
     answer_frequencies = {}
 
-    answers_with_count = self.answer_choices
+    answers_with_count =
+      self
+      .answer_choices
       .select("answer_choices.*, COUNT(responses.id) AS response_count")
-      .joins("LEFT OUTER JOIN responses ON responses.answer_choice_id = answer_choices.id")
+      .joins("LEFT OUTER JOIN responses
+          ON responses.answer_choice_id = answer_choices.id")
       .where("answer_choices.question_id = ?", self.id)
       .group("answer_choices.id")
 
