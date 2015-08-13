@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  validates :user_name, presence: true
+  validates :user_name, presence: true, uniqueness: true
 
   has_many :authored_polls,
     class_name: "Poll",
@@ -12,12 +12,18 @@ class User < ActiveRecord::Base
     primary_key: :id
 
   has_many :authored_questions,
-    :through :authored_polls,
-    :source :questions
+    through: :authored_polls,
+    source: :questions
 
-  has_many :authored_answer_choices
-    :through :authored_questions,
-    :source :answers
+  has_many :authored_answer_choices,
+    through: :authored_questions,
+    source: :answers
+
+  private
+
+  def respondent_has_not_already_answered_question
+
+  end
 
 
 end

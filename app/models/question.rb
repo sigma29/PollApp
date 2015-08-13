@@ -12,8 +12,12 @@ class Question < ActiveRecord::Base
       primary_key: :id
 
   has_one :author,
-    :through :poll,
-    :source :author
+    through: :poll,
+    source: :author
+
+  has_many :responses,
+    through: :answers,
+    source: :responses
 
 
 end
