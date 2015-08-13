@@ -5,4 +5,8 @@ class User < ActiveRecord::Base
     class_name: "Poll",
     foreign_key: :author_id,
     primary_key: :id
+
+  has_many :authored_questions,
+    :through :authored_polls,
+    :source :questions
 end
