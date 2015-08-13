@@ -20,19 +20,33 @@ class Response < ActiveRecord::Base
 
   def sibling_responses
 
-    Response
-      .joins("answer_choices AS current_answer JOIN questions
-          ON current_answer.question_id = questions.id")
-      .joins("JOIN answer_choices AS all_answers
-          ON all_answers.question_id = questions.id")
-      .joins("JOIN responses
-          ON responses.answer_choice_id = all_answers.id")
-      .where("responses.answer_choice_id = ?
-        AND responses.id != ? OR ? IS NULL",
-        self.answer_choice_id, self.id, self.id)
-      .select('responses.*')
-      .distinct
+    big_joins = (<<-SQL
+      AS current_response
+      JOIN
+        answer_choices AS current_answer
+      ON
+        current_answer.id = current_response.answer_choice_id
+      JOIN
+        questions
+      ON
+        current_answer.question_id = questions.id
+      JOIN
+        answer_choices AS all_answers
+      ON
+        all_answers.question_id = questions.id
+      JOIN
+        responses AS all_responses
+      ON
+        all_responses.answer_choice_id = all_answers.id
+    SQL
+    )
 
+    Response
+      .joins(big_joins).select('all_responses.*')
+      .where("current_answer.id = ?
+          AND all_responses.id != ? OR ? IS NULL",
+          self.answer_choice_id, self.id, self.id )
+      .distinct
   end
 
   def respondent_has_not_already_answered_question
