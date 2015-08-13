@@ -19,7 +19,14 @@ class Response < ActiveRecord::Base
     source: :question
 
   def sibling_responses
-    self.question.responses.where("responses.id != ? OR ? IS NULL", self.id, self.id)
+    # self.question.responses.where("responses.id != ? OR ? IS NULL", self.id, self.id)
+
+    AnswerChoice.joins("as current_answer JOIN questions ON current_answer.question_id = questions.id")
+                .joins("JOIN answer_choices AS all_answers ON all_answers.question_id = questions.id")
+                .joins("JOIN responses ON responses.answer_choice_id = all_answers.id")
+                .where("responses.id != ? AND responses.answer_choice_id = ? OR ? IS NULL", self.id, self.answer_choice_id, self.id).select('responses.*')
+                .distinct
+
   end
 
 #ask why this fires twice
