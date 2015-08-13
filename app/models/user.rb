@@ -29,35 +29,6 @@ class User < ActiveRecord::Base
       .group("polls.id")
       .select("polls.*")
       .having("COUNT(user_responses.answer_choice_id) = COUNT(DISTINCT questions.id)")
-      # .select("polls.*")
-    #
-    #
-    # SELECT
-    #    polls.*
-    # FROM
-    #   polls
-    # JOIN
-    #   questions
-    # ON
-    #   questions.poll_id = polls.id
-    # LEFT OUTER JOIN
-    #   answer_choices
-    # ON
-    #   answer_choices.question_id = questions.id
-    # LEFT OUTER JOIN
-    #     (SELECT
-    #       responses.*
-    #      FROM
-    #       responses
-    #      WHERE
-    #       responses.user_id = 1
-    #     ) AS user_responses
-    # ON
-    #   user_responses.answer_choice_id = answer_choices.id
-    # GROUP BY
-    #   polls.id
-    # HAVING
-    #   COUNT(user_responses.answer_choice_id) = COUNT(DISTINCT questions.id)
   end
 
 end

@@ -32,8 +32,16 @@ class Response < ActiveRecord::Base
   end
 
   def author_cant_respond_to_own_poll
-    if self.answer_choice.question.author.id == self.user_id
+
+    poll_author = Poll.where('responses.user_id = ?', self.user_id)
+                      .joins(questions: :answer_choices)
+                      .joins('LEFT OUTER JOIN responses ON responses.answer_choice_id = answer_choices.id')
+                      .first
+                      .author_id
+
+    if poll_author == self.user_id
       errors[:user_id] << "can't respond to your own poll"
     end
+
   end
 end
