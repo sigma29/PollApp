@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
 
   has_many :authored_answer_choices,
     through: :authored_questions,
-    source: :answers
+    source: :answer_choices
 
   private
 
